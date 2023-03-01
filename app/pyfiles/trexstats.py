@@ -72,6 +72,7 @@ stats_period = os.getenv("STATS_PERIOD") or 5
 stats_period = int(stats_period)
 
 def watch(client, ports):
+    log.info("Watching for the traffic in the endless loop")
     stats_obj = TRexAppStats(ports)
     count = 0
     while True:
@@ -94,6 +95,7 @@ def started(profile, packet_rate, duration):
     data['msg'] = ("Started streams with profile ({0}) at rate ({1}) "
                     "for ({2})s ".format(profile, packet_rate, duration))
     data['reason'] = 'TestStarted'
+    log.info("Going to create TestStarted event")
     trexevent.create_event(data)
 
 def completed_stats(stats, warnings, port_a, port_b, profile, rate, duration):
@@ -109,6 +111,7 @@ def completed_stats(stats, warnings, port_a, port_b, profile, rate, duration):
     msg += ("with rate (%s) for (%s)s have completed" % (rate, duration))
     data['msg'] = msg
     data['reason'] = 'TestCompleted'
+    log.info("Going to create TestCompleted event")
     trexevent.create_event(data)
 
     passed = False
@@ -133,9 +136,11 @@ def completed_stats(stats, warnings, port_a, port_b, profile, rate, duration):
         packets = stats[port_a]["opackets"] + stats[port_b]["opackets"]
         data['msg'] = ("Test has Passed with no loss, total packets {}".format(packets))
         data['reason'] = 'TestPassed'
+        log.info("Going to create TestPassed event")
     else:
         data['msg'] = ("Test has failed with packets loss of {} pkts".format(lost))
         data['reason'] = 'TestFailed'
+        log.info("Going to create TestFailed event")
 
     trexevent.create_event(data)
     return passed

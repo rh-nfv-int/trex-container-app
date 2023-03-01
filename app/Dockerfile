@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/python-36:latest
+FROM registry.access.redhat.com/ubi8/python-39:latest
 USER root
 RUN yum install -y nc && yum clean all
 RUN mkdir -p /opt/trex && cd /opt/trex && git clone --branch v2.85 https://github.com/cisco-system-traffic-generator/trex-core.git

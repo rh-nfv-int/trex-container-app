@@ -72,7 +72,7 @@ class STLS1_Wrapper(object):
             # clear the stats before injecting
             self.client.clear_stats()
 
-            # here we multiply the traffic lineaer to whatever given in rate
+            # here, we multiply the traffic by a given rate
             log.info("Running {:} on ports {:}, {:} for {:} seconds...".format(
                 self.rate, self.port_a, self.port_b, self.duration))
 
@@ -80,19 +80,25 @@ class STLS1_Wrapper(object):
                 duration = self.duration, core_mask = STLClient.CORE_MASK_PIN)
 
             # post started event
+            log.info("Going to post the starting event")
             trexstats.started(self.profile, self.rate, self.duration)
 
             # start monitory thread to post stats
+            log.info("Start monitoring thread to post stats")
             self.start_stats_monitor()
 
             # block until done
+            log.info("Block until done, and waiting for traffic")
             self.client.wait_on_traffic(ports=self.ports)
 
             trexstats.force_exit = True
 
             # read the stats after the test
+            log.info("Read the stats after the test")
             stats = self.client.get_stats()
+            log.info("Read the warnings")
             warnings = self.client.get_warnings()
+            log.info("Building overall test status")
             passed = trexstats.completed_stats(stats, warnings, self.port_a, self.port_b, self.profile, self.rate, self.duration)
 
         except STLError as e:
@@ -138,6 +144,8 @@ def main():
         log.info("Duration - %s" % duration)
     if profile:
         log.info("TRex profile - %s" % profile)
+    else:
+        log.info("TRex profile - no profile provided")
     if packet_size:
         log.info("Packet Size - %s" % packet_size)
     try:
